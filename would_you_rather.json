@@ -1,0 +1,9 @@
+<think>
+Alright, let's tackle this "Would you Rather" challenge. The user wants 12 original questions, each under 14 words, with a playful, surprising, and safe-for-ages-13+ tone. They also want a mix of topics like daily life, food, school, travel, habits, gadgets, social media, and superpowers. No violence, hate, sex, etc. Let me brainstorm some ideas.
+
+First, I need to ensure each question is under 14 words. Let me start with daily life. Maybe something about chores versus doing nothing. Then food: maybe a twist on breakfast vs dinner. School could involve homework vs no school. Travel: maybe a funny scenario like a hotel vs a bus. Habits: like always keeping a planner or always being late. Gadget: charging by dancing vs jokes. Social media: maybe a funny prompt like commenting vs not. Superpowers: sneezing glitter vs hiccuping bubbles. Let me check each for originality and adherence to the rules. Avoid any repeated examples from the user. Let me count the words in each to make sure. Okay, that should cover a mix of topics. Now, structure them into a JSON array without numbers or prefixes. Make sure the language is playful and surprising. Alright, let's put it all together.
+</think>
+
+```json
+["Would you rather always speak in rhymes or always speak in riddles?", "Have rewind time for 5 seconds or pause time for 10?", "Sneeze glitter or hiccup tiny bubbles?", "Charge your phone by dancing or by telling jokes?", "Never lose socks again or always find perfect Wi-Fi?", "Eat breakfast for dinner or dinner for breakfast?", "Always carry a notebook or always carry a selfie stick?", "Sleep on a cloud or sleep in a spaceship?", "Wear a superhero cape or a chef's hat?", "Drink coffee in the shower or tea in the bath?", "Take a selfie at a concert or a funeral?", "Fly a drone or a drone with a pet dog."]
+]
