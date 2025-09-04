@@ -41,12 +41,12 @@ jobs:
     
     - name: Create token.json from Secret
       if: ${{ env.HAS_TOKEN }}
-      run: echo "${{ secrets.TOKEN_JSON }}" > token.json
+      run: echo '${{ secrets.TOKEN_JSON }}' > token.json
 
     - name: Create credentials.json from Secret
       if: ${{ env.HAS_CRED }}
       run: |
-        echo "${{ secrets.YT_CREDENTIALS }}" > credentials.json
+        echo '${{ secrets.YT_CREDENTIALS }}' > credentials.json
 
       # ✅ Validate JSON
     - name: Validate JSON files
