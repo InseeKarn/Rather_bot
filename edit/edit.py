@@ -3,10 +3,10 @@ import json
 import random
 import platform
 import moviepy.config as mpc
-import pyttsx3
+from gtts import gTTS
 import gc
-import pygame
-pygame.init()
+# import pygame
+# pygame.init()
 
 from moviepy.editor import *
 
@@ -65,29 +65,27 @@ from dotenv import load_dotenv
 from PIL import Image
 load_dotenv()
 
-API_KEY = os.getenv("GOOGLE_API")
-SEARCH_ID = os.getenv("GOOGLE_SEARCH_ID")
+
+API_KEY = os.getenv("UNS_ACCESS")  # ใส่ Access Key ของ Unsplash
 
 os.makedirs("src/imgs", exist_ok=True)
 
 def search_image(query):
-    if not API_KEY or not SEARCH_ID:
-        print("Warning: Google API credentials not found")
+    if not API_KEY:
+        print("Warning: Unsplash API Key not found")
         return None
-        
-    url = "https://www.googleapis.com/customsearch/v1"
+    
+    url = "https://api.unsplash.com/photos/random"
     params = {
-        "key": API_KEY,
-        "cx": SEARCH_ID,
-        "searchType": "image",
-        "q": query,
-        "num": 1,
+        "query": query,
+        "client_id": API_KEY,
+        "orientation": "landscape"
     }
     try:
         resp = requests.get(url, params=params, timeout=10)
         data = resp.json()
-        if "items" in data and len(data["items"]) > 0:
-            return data["items"][0]["link"]
+        if "urls" in data and "regular" in data["urls"]:
+            return data["urls"]["regular"]
     except Exception as e:
         print(f"Search error: {e}")
     return None
@@ -215,6 +213,8 @@ for i, q in enumerate(selected_questions):
 
 print("Image download completed. Creating video clips...")
 
+#============================================================
+
 # =============== Create Video Clips ========================
 
 def create():
@@ -230,16 +230,11 @@ def create():
 
         # TTS
         try:
-            engine = pyttsx3.init()
-            engine.setProperty('rate', 150)  # ความเร็วพูด
-            engine.setProperty('volume', 1.0)  # ระดับเสียง
-
             tts_file = f'src/tts/tts_{i}.mp3'
-            engine.save_to_file(q, tts_file)
-            engine.runAndWait()
-            engine.stop()  # Stop engine to free resources
-            del engine  # Delete engine object
-            
+
+            tts = gTTS(text=q, lang='en')
+            tts.save(tts_file)
+
             audio_clip = AudioFileClip(tts_file)
             print(f"TTS created for question {i+1}: {audio_clip.duration:.1f}s")
             
@@ -327,11 +322,11 @@ def create():
                 print(f"[DEBUG] {name} created: duration={clip.duration}, position={clip.pos}")
         
         # --- Images with original positions ---
-        top_clip = safe_imageclip(top_img_paths[i], ("center", 327), total_duration, end_time)
+        top_clip = safe_imageclip(top_img_paths[i], ("center", 150), total_duration, end_time)
         if top_clip is None:
             top_clip = ColorClip(size=(10,20), color=(0,0,0)).set_position(("center",327)).set_start(total_duration).set_duration(end_time)
 
-        bot_clip = safe_imageclip(bot_img_paths[i], ("center",900), total_duration, end_time)
+        bot_clip = safe_imageclip(bot_img_paths[i], ("center",850), total_duration, end_time)
         if bot_clip is None:
             bot_clip = ColorClip(size=(10,20), color=(128,128,128)).set_position(("center",900)).set_start(total_duration).set_duration(end_time)
 
