@@ -1,4 +1,4 @@
-name: Riddle Shorts Upload
+name: Rather_bot Daily Run
 
 on:
   schedule:

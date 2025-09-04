@@ -6,7 +6,6 @@ import moviepy.config as mpc
 import gc
 
 from gtts import gTTS
-from pydub import AudioSegment
 # import pygame
 # pygame.init()
 
@@ -218,9 +217,89 @@ print("Image download completed. Creating video clips...")
 
 #============================================================
 
+#========================== Effects ========================
+
+t = 0
+
+def bounce_in(t, duration=0.5):
+    """
+    สร้าง bounce effect สำหรับ text
+    t: เวลาปัจจุบัน
+    duration: ระยะเวลาของ animation
+    """
+    if t > duration:
+        return 1.0
+    
+    # ใช้ easing function แบบ bounce
+    progress = t / duration
+    if progress < 0.363636:
+        return 7.5625 * progress * progress
+    elif progress < 0.727272:
+        progress -= 0.545454
+        return 7.5625 * progress * progress + 0.75
+    elif progress < 0.909090:
+        progress -= 0.818181
+        return 7.5625 * progress * progress + 0.9375
+    else:
+        progress -= 0.954545
+        return 7.5625 * progress * progress + 0.984375
+
+def bounce_from_bottom(t):
+    if t < 0.6:
+        bounce_progress = bounce_in(t, 0.6)
+        y_offset = (1 - bounce_progress) * 200  # เริ่มจากด้านล่าง
+        return ('center', 1050 + y_offset)
+    else:
+        return ('center', 1050)
+    
+def animate_text_bounce(txt_clip, start_pos, bounce_duration=0.6):
+    def position_func(t):
+        if t < bounce_duration:
+            progress = bounce_in(t, bounce_duration)
+            y_offset = (1 - progress) * (-200)  # เริ่มจากบน
+            return (start_pos[0], start_pos[1] + y_offset)
+        return start_pos
+    return txt_clip.set_position(position_func)
+
+# IMAGES
+
+def image_bounce_from_top(path, start_pos, start_time, duration, bounce_duration=0.6, resize=0.5):
+    # โหลด clip ผ่าน safe_imageclip
+    clip = safe_imageclip(path, start_pos, start_time, duration, resize)
+    if not clip:
+        return None
+    
+    def pos(t):
+        if t < bounce_duration:
+            progress = bounce_in(t, bounce_duration)
+            y_offset = (1 - progress) * -200  # เริ่มจาก -200 px ด้านบน
+            return (start_pos[0], start_pos[1] + y_offset)
+        return start_pos
+
+    return clip.set_position(pos)
+
+def image_bounce_from_bottom(path, start_pos, start_time, duration, bounce_duration=0.6, resize=0.5):
+    clip = safe_imageclip(path, start_pos, start_time, duration, resize)
+    if not clip:
+        return None
+    
+    def pos(t):
+        if t < bounce_duration:
+            progress = bounce_in(t, bounce_duration)
+            y_offset = (1 - progress) * 200  # เริ่มจาก +200 px ด้านล่าง
+            return (start_pos[0], start_pos[1] + y_offset)
+        return start_pos
+    
+    return clip.set_position(pos)
+
+
+#===========================================================
+
 # =============== Create Video Clips ========================
 
 def create():
+
+
     total_duration = 0
     for i, q in enumerate(selected_questions):
         print(f"Creating clips for question {i+1}/{len(selected_questions)}...")
@@ -279,7 +358,9 @@ def create():
                 size=(700,100), 
                 align='center'
             ).set_position(('center',50)).set_start(total_duration).set_duration(end_time)
-            
+
+            txt_top = animate_text_bounce(txt_top, ('center', 50), bounce_duration=0.6)
+
             txt_bot = TextClip(
                 f"{option2}",
                 fontsize=50,
@@ -289,6 +370,8 @@ def create():
                 size=(700,300),
                 align='center'
             ).set_position(('center',1050)).set_start(total_duration).set_duration(end_time)
+
+            txt_bot = txt_bot.set_position(bounce_from_bottom)
             
             txt_or = TextClip(
                 "OR",
@@ -331,11 +414,11 @@ def create():
                 print(f"[DEBUG] {name} created: duration={clip.duration}, position={clip.pos}")
         
         # --- Images with original positions ---
-        top_clip = safe_imageclip(top_img_paths[i], ("center", 150), total_duration, end_time)
+        top_clip = image_bounce_from_top(top_img_paths[i], ("center", 150), total_duration, end_time)
         if top_clip is None:
             top_clip = ColorClip(size=(10,20), color=(0,0,0)).set_position(("center",327)).set_start(total_duration).set_duration(end_time)
 
-        bot_clip = safe_imageclip(bot_img_paths[i], ("center",850), total_duration, end_time)
+        bot_clip = image_bounce_from_bottom(bot_img_paths[i], ("center", 850), total_duration, end_time)
         if bot_clip is None:
             bot_clip = ColorClip(size=(10,20), color=(128,128,128)).set_position(("center",900)).set_start(total_duration).set_duration(end_time)
 
