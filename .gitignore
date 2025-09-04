@@ -1,2 +1,13 @@
 .env
 .venv/
+.venv_test
+
+__pycache__/
+*.pyc
+
+
+credentials.json
+
+token.json
+
+tempCodeRunnerFile.py
