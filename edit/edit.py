@@ -3,8 +3,10 @@ import json
 import random
 import platform
 import moviepy.config as mpc
-from gtts import gTTS
 import gc
+
+from gtts import gTTS
+from pydub import AudioSegment
 # import pygame
 # pygame.init()
 
@@ -83,6 +85,7 @@ def search_image(query):
     }
     try:
         resp = requests.get(url, params=params, timeout=10)
+        print(resp.status_code, resp.text[:200])  # debug
         data = resp.json()
         if "urls" in data and "regular" in data["urls"]:
             return data["urls"]["regular"]
@@ -235,7 +238,7 @@ def create():
             tts = gTTS(text=q, lang='en')
             tts.save(tts_file)
 
-            audio_clip = AudioFileClip(tts_file)
+            audio_clip = AudioFileClip(tts_file).fx(vfx.speedx, 1.25)
             print(f"TTS created for question {i+1}: {audio_clip.duration:.1f}s")
             
         except Exception as e:
@@ -253,6 +256,12 @@ def create():
         # FX sound
         try:
             fx_clip = AudioFileClip("src/sfx/clock-ticking.mp3").set_start(total_duration + txt_main_dura).set_duration(wait_before_percent).volumex(0.5)
+            audio_clips.append(fx_clip)
+        except Exception as e:
+            print(f"FX sound error: {e}")
+
+        try:
+            fx_clip = AudioFileClip("src/sfx/ding.mp3").set_start(total_duration + txt_main_dura + wait_before_percent).set_duration(2).volumex(0.5)
             audio_clips.append(fx_clip)
         except Exception as e:
             print(f"FX sound error: {e}")
@@ -421,21 +430,21 @@ def create():
         print(f"❌ Video creation failed: {e}")
         print("Attempting simpler video creation...")
         
-        try:
-            # Simpler approach - just video without complex audio mixing
-            simple_clips = [bg_clip] + [clip for clip in text_clips if clip is not None]
-            simple_video = CompositeVideoClip(simple_clips)
+        # try:
+        #     # Simpler approach - just video without complex audio mixing
+        #     simple_clips = [bg_clip] + [clip for clip in text_clips if clip is not None]
+        #     simple_video = CompositeVideoClip(simple_clips)
             
-            simple_video.write_videofile(
-                "src/outputs/final_simple.mp4",
-                fps=24,
-                threads=1,
-                verbose=True
-            )
-            print("✅ Simple video created successfully!")
-            simple_video.close()
-        except Exception as e2:
-            print(f"❌ Even simple video creation failed: {e2}")
+        #     simple_video.write_videofile(
+        #         "src/outputs/final_simple.mp4",
+        #         fps=24,
+        #         threads=1,
+        #         verbose=True
+        #     )
+        #     print("✅ Simple video created successfully!")
+        #     simple_video.close()
+        # except Exception as e2:
+        #     print(f"❌ Even simple video creation failed: {e2}")
 
     # Delete src/imgs
     print("Cleaning up temporary files...")
