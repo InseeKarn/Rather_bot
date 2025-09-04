@@ -39,13 +39,14 @@ jobs:
         sudo apt-get install -y imagemagick
         sudo sed -i 's|rights="none"|rights="read|write"|g' /etc/ImageMagick-6/policy.xml
     
-    - name: Create empty state files if missing
-      run: |
-        [ -f token.json ] || echo "{}" > token.json
+    - name: Create token.json from Secret
+      if: ${{ env.HAS_TOKEN }}
+      run: echo "${{ secrets.TOKEN_JSON }}" > token.json
 
-    - name: Create credentials.json
+    - name: Create credentials.json from Secret
       if: ${{ env.HAS_CRED }}
-      run: printf '%s' '${{ secrets.YT_CREDENTIALS }}' > credentials.json
+      run: |
+        echo "${{ secrets.YT_CREDENTIALS }}" > credentials.json
 
       # ✅ Validate JSON
     - name: Validate JSON files
