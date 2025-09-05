@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Callback</title>
+</head>
+<body>
+  <h1>Login Callback</h1>
+  <p id="info"></p>
+
+  <script>
+    // อ่าน query string ของ URL
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');   // authorization code
+    const state = params.get('state'); // state ถ้ามี
+
+    if(code){
+      document.getElementById('info').innerText = `Authorization code: ${code}`;
+      console.log('TikTok authorization code:', code);
+      // TODO: ส่ง code ไปแลก access token ผ่าน server ของคุณ
+    } else {
+      document.getElementById('info').innerText = 'No authorization code found';
+    }
+  </script>
+</body>
+</html>
