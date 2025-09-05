@@ -300,7 +300,36 @@ def image_bounce_from_bottom(path, start_pos, start_time, duration, bounce_durat
 def create():
 
 
-    total_duration = 0
+    total_duration = 1
+
+    choose_img_path = f"src/choose.jpg"
+
+    intro_img = ImageClip(choose_img_path) \
+    .resize((700,700)) \
+    .set_position(('center', 'center')) \
+    .set_start(0) \
+    .set_duration(1)
+    
+    txt_choose = TextClip(
+    "What would you choose?",
+    fontsize=40,
+    color='White',
+    font=my_font,
+    method='label',
+    size=(600,50),
+    align='center'
+    ).set_position(('center',1000)).set_start(0).set_duration(1)
+
+    #tts
+    intro_txt = "What would you choose?"
+    tts_choose_file = 'src/tts/choose_tts.mp3'
+    tts_choose = gTTS(text=intro_txt, lang='en')
+    tts_choose.save(tts_choose_file)
+    audio_choose = AudioFileClip(tts_choose_file).fx(vfx.speedx, 1.25)
+    audio_clips.append(audio_choose.set_start(0))
+
+    
+
     for i, q in enumerate(selected_questions):
         print(f"Creating clips for question {i+1}/{len(selected_questions)}...")
         
@@ -376,7 +405,7 @@ def create():
             txt_or = TextClip(
                 "OR",
                 fontsize=70,
-                color='yellow',
+                color='white',
                 font=my_font,
                 method='label',
                 size=(700,100),
@@ -385,7 +414,7 @@ def create():
             txt_num1 = TextClip(
                 f"{round(num_ran, 2)}%",
                 fontsize=45,
-                color="magenta",
+                color="red" if round(num_ran, 2) < round(100.0 - round(num_ran, 2), 2) else "green",
                 font=my_font,
                 method="label",
                 size=(300,100),
@@ -395,7 +424,7 @@ def create():
             txt_num2 = TextClip(
                 f"{round(100.0 - round(num_ran, 2), 2)}%",
                 fontsize=45,
-                color="magenta",
+                color="red" if round(100.0 - round(num_ran, 2), 2) < round(num_ran, 2) else "green",
                 font=my_font,
                 method="label",
                 size=(300,100),
@@ -445,7 +474,8 @@ def create():
 
     # Background clip
     try:
-        bg_clip = ImageClip("src/template.png").resize((720,1280)).set_duration(total_duration)
+        bg_clip = ColorClip(size=(720,1280), color=(0,0,0)).set_start(0).set_duration(1)
+        bg_clip = ImageClip("src/template.png").resize((720,1280)).set_start(1).set_duration(total_duration)
         print("Background loaded successfully")
     except Exception as e:
         print(f"Background error: {e}. Using black background.")
@@ -455,7 +485,7 @@ def create():
 
     try:
         # Filter out None clips
-        valid_clips = [clip for clip in text_clips + clips if clip is not None]
+        valid_clips = [txt_choose, intro_img] + [clip for clip in text_clips + clips if clip is not None]
         final_clip = CompositeVideoClip([bg_clip] + valid_clips)
         print(f"Video composition completed with {len(valid_clips)} clips")
 

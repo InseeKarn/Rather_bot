@@ -1,4 +1,5 @@
 import os
+import random
 from dotenv import load_dotenv
 
 from googleapiclient.discovery import build
@@ -86,11 +87,18 @@ def upload_video(file_path, title, description,
     return video_url
 
     # print(youtube_api)
-def run_upload():
-    raw_title = """Pick One… If You Dare 😱 | Would You Rather #fyp #shorts #vira'"""
-
     
-    clean_title = " ".join(raw_title.split())
+def run_upload():
+    # raw_title = """Pick One… If You Dare 😱 | Would You Rather #fyp #shorts #vira'"""
+    title_ran = random.choice([
+        "99% Can’t Decide This! 😱 | Would You Rather #shorts #viral",
+        "Only Brave People Can Choose… Dare You? 🤯 | Would You Rather #fyp",
+        "This Choice Will Break Your Brain! 🧠💥 | Would You Rather #viral #shorts",
+        "WARNING: Once You Choose, You Can’t Undo! ⚠️ | Would You Rather",
+        "The HARDEST Would You Rather EVER! 😳 | #fyp #viral #shorts",
+        ])
+
+    clean_title = " ".join(title_ran.split())
     # x <= 100
     clean_title = clean_title[:100]
 
