@@ -386,9 +386,9 @@ def create():
                 method='caption',
                 size=(700,100), 
                 align='center'
-            ).set_position(('center',50)).set_start(total_duration).set_duration(end_time)
+            ).set_position(('center',65)).set_start(total_duration).set_duration(end_time)
 
-            txt_top = animate_text_bounce(txt_top, ('center', 50), bounce_duration=0.6)
+            txt_top = animate_text_bounce(txt_top, ('center', 65), bounce_duration=0.6)
 
             txt_bot = TextClip(
                 f"{option2}",
@@ -443,7 +443,7 @@ def create():
                 print(f"[DEBUG] {name} created: duration={clip.duration}, position={clip.pos}")
         
         # --- Images with original positions ---
-        top_clip = image_bounce_from_top(top_img_paths[i], ("center", 150), total_duration, end_time)
+        top_clip = image_bounce_from_top(top_img_paths[i], ("center", 165), total_duration, end_time)
         if top_clip is None:
             top_clip = ColorClip(size=(10,20), color=(0,0,0)).set_position(("center",327)).set_start(total_duration).set_duration(end_time)
 
