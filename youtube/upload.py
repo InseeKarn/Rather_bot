@@ -65,10 +65,6 @@ def upload_video(file_path, title, description,
             "tags": [
                 "shorts", "fyp", "viral", "wouldyourather", "thisorthat",
                 "funchoices", "wouldyouratherchallenge", "choicegame",
-                "challengegame", "decisiontime", "funquiz", "mindgames",
-                "interactivevideo", "trending", "entertainment", "brain",
-                "puzzle", "game", "quiz", "logic", "thinking", "challenge",
-                "brainchallenge", "fun", "interactive", "mindchallenge"
             ]
         },
         "status": {
