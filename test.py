@@ -383,12 +383,4 @@ while True:
     pygame.display.flip()
     clock.tick(60)
 
-https://www.tiktok.com/auth/authorize/
-?client_key=sbawstaa06vtyabqgi
-&response_type=code
-&scope=user.info.basic,video.upload
-&redirect_uri=https://inseekarn.github.io/Rather_bot/callback.html
-&state=12345
-
-inseert9
-9_may2004
+# Dev by InseeKarn

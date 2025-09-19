@@ -23,6 +23,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    # 🟢 Load token.json from artifact if it's have
+    - name: Download previous token.json
+      continue-on-error: true
+      uses: actions/download-artifact@v4
+      with:
+        name: token
+        path: .
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -40,9 +48,12 @@ jobs:
         sudo apt-get install -y imagemagick
         sudo sed -i 's|rights="none"|rights="read|write"|g' /etc/ImageMagick-6/policy.xml
     
-    - name: Create token.json from Secret
-      if: ${{ env.HAS_TOKEN }}
-      run: echo '${{ secrets.TOKEN_JSON }}' > token.json
+    - name: Create token.json from Secret (fallback)
+      if: ${{ env.HAS_TOKEN == 'true' }}
+      run: |
+        if [ ! -f token.json ]; then
+          echo '${{ secrets.TOKEN_JSON }}' > token.json
+        fi
 
     - name: Create credentials.json from Secret
       if: ${{ env.HAS_CRED }}
@@ -67,3 +78,10 @@ jobs:
 
     - name: Run main.py
       run: python main.py
+
+    - name: Upload refreshed token.json
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: token
+        path: token.json
