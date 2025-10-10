@@ -8,7 +8,7 @@ Rather_bot is a Python-based automated video generator that creates **"Would You
 
 - Randomly selects questions from a JSON database.
 - Converts questions to speech using **Google Text-to-Speech (gTTS)**.
-- Fetches images automatically using **Pixabay API**.
+- Fetches images automatically using **Unsplash API**.
 - Generates text overlays with question options and random percentages.
 - Adds background music and sound effects.
 - Compiles high-quality videos using **MoviePy**.
@@ -34,4 +34,5 @@ Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
+
 
