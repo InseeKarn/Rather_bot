@@ -223,9 +223,9 @@ t = 0
 
 def bounce_in(t, duration=0.5):
     """
-    สร้าง bounce effect สำหรับ text
-    t: เวลาปัจจุบัน
-    duration: ระยะเวลาของ animation
+    สร้าง bounce effect for text
+    t: Current time
+    duration: duration of animation
     """
     if t > duration:
         return 1.0
@@ -264,7 +264,7 @@ def animate_text_bounce(txt_clip, start_pos, bounce_duration=0.6):
 # IMAGES
 
 def image_bounce_from_top(path, start_pos, start_time, duration, bounce_duration=0.6, resize=0.5):
-    # โหลด clip ผ่าน safe_imageclip
+    # load clip through safe_imageclip
     clip = safe_imageclip(path, start_pos, start_time, duration, resize)
     if not clip:
         return None
