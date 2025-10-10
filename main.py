@@ -1,5 +1,4 @@
 # Dev by InseeKarn
-
 from edit.edit import create
 from youtube.upload import run_upload
 from notify.discord import discord_message
