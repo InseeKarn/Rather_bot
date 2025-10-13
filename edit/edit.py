@@ -67,7 +67,7 @@ from PIL import Image
 load_dotenv()
 
 
-API_KEY = os.getenv("UNS_ACCESS")  # ใส่ Access Key ของ Unsplash
+API_KEY = os.getenv("UNS_ACCESS")
 
 os.makedirs("src/imgs", exist_ok=True)
 
