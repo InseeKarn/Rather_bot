@@ -2,9 +2,9 @@ name: Rather_bot Daily Run
 
 on:
   schedule:
-    - cron: "0 13 * * *"  # 09:00 ET
-    - cron: "0 0 * * *"  # 20:00 ET
-  workflow_dispatch:  
+    - cron: "0 13 * * *"
+    - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   run-bot:
@@ -23,13 +23,22 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 🟢 Load token.json from artifact if it's have
+
     - name: Download previous token.json
       continue-on-error: true
       uses: actions/download-artifact@v4
       with:
         name: token
         path: .
+
+
+    - name: Create token.json from Secret (fallback)
+      if: ${{ env.HAS_TOKEN == 'true' && !hashFiles('token.json') }}
+      run: echo '${{ secrets.TOKEN_JSON }}' > token.json
+
+    - name: Create credentials.json from Secret
+      if: ${{ env.HAS_CRED }}
+      run: echo '${{ secrets.YT_CREDENTIALS }}' > credentials.json
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -41,43 +50,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-
     - name: Install ImageMagick
       run: |
         sudo apt-get update
         sudo apt-get install -y imagemagick
         sudo sed -i 's|rights="none"|rights="read|write"|g' /etc/ImageMagick-6/policy.xml
-    
-    - name: Create token.json from Secret (fallback)
-      if: ${{ env.HAS_TOKEN == 'true' }}
-      run: |
-        if [ ! -f token.json ]; then
-          echo '${{ secrets.TOKEN_JSON }}' > token.json
-        fi
 
-    - name: Create credentials.json from Secret
-      if: ${{ env.HAS_CRED }}
-      run: |
-        echo '${{ secrets.YT_CREDENTIALS }}' > credentials.json
-
-      # ✅ Validate JSON
     - name: Validate JSON files
       run: |
         python -m json.tool credentials.json > /dev/null
         python -m json.tool token.json > /dev/null
 
 
-    # ✅ Save state
-    - name: Save initial state files
-      uses: actions/upload-artifact@v4
-      with:
-        name: state-files
-        path: |
-            token.json
-            credentials.json
-
     - name: Run main.py
       run: python main.py
+
 
     - name: Upload refreshed token.json
       if: always()
