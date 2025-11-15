@@ -23,7 +23,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-
+    # ✅ CRITICAL: Download token.json from previous run first
     - name: Download previous token.json
       continue-on-error: true
       uses: actions/download-artifact@v4
@@ -31,13 +31,23 @@ jobs:
         name: token
         path: .
 
+    # ✅ Create empty token.json if doesn't exist
+    - name: Create empty token.json if missing
+      run: |
+        if [ ! -f token.json ]; then
+          echo "{}" > token.json
+        fi
 
+    # ✅ Overwrite with secret only if secret exists AND file is empty/invalid
     - name: Create token.json from Secret (fallback)
-      if: ${{ env.HAS_TOKEN == 'true' && !hashFiles('token.json') }}
-      run: echo '${{ secrets.TOKEN_JSON }}' > token.json
+      if: ${{ env.HAS_TOKEN == 'true' }}
+      run: |
+        if [ ! -s token.json ] || ! python -m json.tool token.json > /dev/null 2>&1; then
+          echo '${{ secrets.TOKEN_JSON }}' > token.json
+        fi
 
     - name: Create credentials.json from Secret
-      if: ${{ env.HAS_CRED }}
+      if: ${{ env.HAS_CRED == 'true' }}
       run: echo '${{ secrets.YT_CREDENTIALS }}' > credentials.json
 
     - name: Set up Python
@@ -61,14 +71,14 @@ jobs:
         python -m json.tool credentials.json > /dev/null
         python -m json.tool token.json > /dev/null
 
-
     - name: Run main.py
       run: python main.py
 
-
+    # ✅ CRITICAL: Always upload the refreshed token.json
     - name: Upload refreshed token.json
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: token
         path: token.json
+        retention-days: 90
